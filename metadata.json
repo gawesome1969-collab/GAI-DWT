@@ -1,0 +1,7 @@
+{
+  "name": "Dog Walk Tracker",
+  "description": "An application to automatically track your dog walks using GPS. It logs walk duration, distance, zones visited, and provides statistics and notifications.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
