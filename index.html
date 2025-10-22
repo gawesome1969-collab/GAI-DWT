@@ -1,1 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dog Walk Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-dark': '#1C1B1F',
+              'brand-card': '#2A282D',
+              'brand-accent': '#D9A184',
+              'brand-light': '#F4F2F1',
+              'brand-secondary': '#A8A5A3',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+</head>
+<body class="bg-brand-dark">
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        // --- ALL APP CODE IS BUNDLED HERE ---
 
+        // --- ICONS (from components/icons.tsx) ---
+        const HomeIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+        );
+        const MapIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 10V7m0 10l-6 3" />
+            </svg>
+        );
+        const HistoryIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+        const CogIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        );
+        const PawPrintIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C9.2 2 7.5 3.5 7.5 6C7.5 7.5 9 8.8 10.4 9.5C10.1 10.4 9.2 11 8 11C6.4 11 5.5 9.9 5.5 8.5C5.5 7.1 6.9 6 8.5 6C9.1 6 9.6 6.2 10 6.5C10.5 5.5 11.2 4 12.5 3C13.8 4 14.5 5.5 15 6.5C15.4 6.2 15.9 6 16.5 6C18.1 6 19.5 7.1 19.5 8.5C19.5 9.9 18.6 11 17 11C15.8 11 14.9 10.4 14.6 9.5C16 8.8 17.5 7.5 17.5 6C17.5 3.5 15.8 2 13 2H12Z M4.5 12C3.1 12 2 13.1 2 14.5C2 15.9 3.1 17 4.5 17C5.9 17 7 15.9 7 14.5C7 13.1 5.9 12 4.5 12ZM19.5 12C18.1 12 17 13.1 17 14.5C17 15.9 18.1 17 19.5 17C20.9 17 22 15.9 22 14.5C22 13.1 20.9 12 19.5 12ZM8.5 14C7.1 14 6 15.1 6 16.5C6 17.9 7.1 19 8.5 19C9.9 19 11 17.9 11 16.5C11 15.1 9.9 14 8.5 14ZM15.5 14C14.1 14 13 15.1 13 16.5C13 17.9 14.1 19 15.5 19C16.9 19 18 17.9 18 16.5C18 15.1 16.9 14 15.5 14Z" />
+            </svg>
+        );
+        const PlusCircleIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+        const TrashIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+        );
+        const BellIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+        );
+        const PlayIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+        );
+        const DistanceIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+        );
+        const ZzzIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 20.5a.5.5 0 00.5.5h3a.5.5 0 00.5-.5v-3a.5.5 0 00-.5-.5h-3a.5.5 0 00-.5.5v3zM7 15.5a.5.5 0 00.5.5h3a.5.5 0 00.5-.5v-3a.5.5 0 00-.5-.5h-3a.5.5 0 00-.5.5v3zM4 10.5a.5.5 0 00.5.5h3a.5.5 0 00.5-.5v-3a.5.5 0 00-.5-.5h-3a.5.5 0 00-.5.5v3z" />
+            </svg>
+        );
+
+        // --- APP LOGIC (from App.tsx) ---
+        const { useState, useEffect, useCallback, useMemo, FC, useRef } = React;
+
+        const HOME_RADIUS_KM = 0.05;
+        const WALK_START_CONFIRMATION_COUNT = 3; 
+        const WALK_END_CONFIRMATION_COUNT = 2;   
+        const LOCAL_STORAGE_KEY = 'dog-walk-tracker-data';
+        const HIGH_ACCURACY_GEOLOCATION_OPTIONS = {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+        };
+        const LOW_POWER_GEOLOCATION_OPTIONS = {
+            enableHighAccuracy: false,
+            timeout: 20000,
+            maximumAge: 60000,
+        };
+        const LOW_POWER_INTERVAL = 2 * 60 * 1000;
+        const ZONE_COLORS = ['#F87171', '#60A5FA', '#34D399', '#FBBF24', '#A78BFA', '#F472B6'];
+
+        const getDistance = (lat1, lon1, lat2, lon2) => {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        };
+
+        const formatDuration = (seconds, style = 'short') => {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            
+            if (style === 'long') {
+                let parts = [];
+                if (h > 0) parts.push(`${h} hr`);
+                if (m > 0) parts.push(`${m} min`);
+                if (h === 0 && m === 0) parts.push(`${s} sec`);
+                return parts.join(' ') || '0 sec';
+            }
+
+            let result = '';
+            if (h > 0) result += `${h}h `;
+            if (m > 0) result += `${m}m `;
+            if (h === 0 && m === 0) result += `${s}s`;
+            return result.trim() || '0s';
+        };
+
+        const formatTimeSince = (timestamp) => {
+            if (!timestamp) return { value: '', unit: '' };
+            const now = Date.now();
+            const seconds = Math.floor((now - timestamp) / 1000);
+
+            if (seconds < 60) return { value: seconds.toString(), unit: "seconds" };
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return { value: minutes.toString(), unit: minutes === 1 ? "minute" : "minutes" };
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return { value: hours.toString(), unit: hours === 1 ? "hour" : "hours" };
+            const days = Math.floor(hours / 24);
+            return { value: days.toString(), unit: days === 1 ? "day" : "days" };
+        };
+
+        const Header = ({ setView }) => (
+            <header className="sticky top-0 z-10 p-4 flex items-center justify-between">
+                <PawPrintIcon className="w-8 h-8 text-brand-light" />
+                <h1 className="text-xl font-bold text-brand-light">Fido's Last Walk</h1>
+                <button onClick={() => setView('settings')} className="text-brand-light">
+                    <CogIcon className="w-7 h-7" />
+                </button>
+            </header>
+        );
+
+        const BottomNav = ({ currentView, setView }) => {
+            const navItems = [
+                { id: 'home', icon: HomeIcon, label: 'Home' },
+                { id: 'history', icon: HistoryIcon, label: 'History' },
+                { id: 'zones', icon: MapIcon, label: 'Zones' },
+            ];
+
+            return (
+                <nav className="fixed bottom-0 left-0 right-0 bg-brand-dark/80 backdrop-blur-sm border-t border-brand-card flex justify-around">
+                    {navItems.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => setView(item.id)}
+                            className={`flex-1 p-2 flex flex-col items-center justify-center text-sm transition-colors ${currentView === item.id ? 'text-brand-accent' : 'text-brand-secondary hover:text-brand-light'}`}
+                        >
+                            <item.icon className="w-7 h-7 mb-1" />
+                            <span className="font-medium">{item.label}</span>
+                        </button>
+                    ))}
+                </nav>
+            );
+        };
+
+        const PermissionsGate = ({ onGrant }) => (
+            <div className="flex flex-col items-center justify-center h-screen bg-brand-dark text-brand-light p-4 text-center">
+                <PawPrintIcon className="w-24 h-24 text-brand-accent mb-6" />
+                <h1 className="text-3xl font-bold mb-2">Welcome to Dog Walk Tracker</h1>
+                <p className="mb-6 max-w-md text-brand-secondary">To track your walks, we need access to your device's location. Your data is stored locally and is not shared.</p>
+                <button onClick={onGrant} className="bg-brand-accent hover:opacity-90 text-brand-dark font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
+                    Grant Location Permission
+                </button>
+            </div>
+        );
+
+        const SetupHome = ({ onSetHome }) => {
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+
+            const handleSetHome = () => {
+                setLoading(true);
+                setError(null);
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => { setLoading(false); onSetHome(pos); },
+                    (err) => { setLoading(false); setError(`Error: ${err.message}.`); },
+                    HIGH_ACCURACY_GEOLOCATION_OPTIONS
+                );
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-screen bg-brand-dark text-brand-light p-4 text-center">
+                    <HomeIcon className="w-24 h-24 text-brand-accent mb-6" />
+                    <h1 className="text-3xl font-bold mb-2">Set Your Home Zone</h1>
+                    <p className="mb-6 max-w-md text-brand-secondary">To automatically detect walks, please set your current location as "Home".</p>
+                    {error && <p className="text-red-400 mb-4">{error}</p>}
+                    <button onClick={handleSetHome} disabled={loading} className="bg-brand-accent hover:opacity-90 text-brand-dark font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 disabled:bg-gray-500">
+                        {loading ? 'Getting Location...' : 'Set Current Location as Home'}
+                    </button>
+                </div>
+            );
+        };
+
+        const HomeView = ({ isWalking, currentWalk, lastWalk, onManualStart }) => {
+            const [currentTime, setCurrentTime] = useState(Date.now());
+
+            useEffect(() => {
+                const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+            
+            if (isWalking && currentWalk) {
+                const walkDuration = Math.floor((currentTime - currentWalk.startTime) / 1000);
+                return (
+                    <div className="p-4 text-center flex flex-col justify-center items-center h-[70vh]">
+                         <h2 className="text-brand-accent text-2xl font-bold animate-pulse mb-4">Walk in Progress</h2>
+                         <PawPrintIcon className="w-20 h-20 text-brand-accent mx-auto my-4"/>
+                         <div className="grid grid-cols-2 gap-6 text-brand-light mt-4 w-full max-w-sm">
+                             <div className="flex flex-col">
+                                 <span className="text-5xl font-bold">{formatDuration(walkDuration)}</span>
+                                 <span className="text-brand-secondary">Duration</span>
+                             </div>
+                             <div className="flex flex-col">
+                                 <span className="text-5xl font-bold">{currentWalk.distance.toFixed(2)}</span>
+                                 <span className="text-brand-secondary">km</span>
+                             </div>
+                         </div>
+                    </div>
+                )
+            }
+            
+            const timeSince = formatTimeSince(lastWalk?.endTime);
+            
+            return (
+                <div className="p-4 flex flex-col h-[calc(100vh-150px)]">
+                    <div className="flex-grow flex flex-col items-center justify-center text-center">
+                        <p className="text-brand-secondary text-lg">Time Since Last Walk</p>
+                        {lastWalk ? (
+                            <>
+                                <span className="text-8xl font-black text-brand-accent leading-none mt-2">{timeSince.value}</span>
+                                <span className="text-6xl font-bold text-brand-accent leading-none">{timeSince.unit}</span>
+                                <p className="text-5xl font-bold text-brand-accent">ago</p>
+                            </>
+                        ) : (
+                            <p className="text-3xl font-bold text-brand-accent mt-4">Let's go for a walk!</p>
+                        )}
+                         <div className="mt-4 flex items-center space-x-2 text-brand-secondary/70">
+                            <ZzzIcon className="w-5 h-5"/>
+                            <span className="text-sm font-medium">Low Power Monitoring</span>
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="bg-brand-card p-4 rounded-2xl flex flex-col items-start space-y-2">
+                            <div className="flex items-center space-x-2 text-brand-accent">
+                                <DistanceIcon className="w-5 h-5" />
+                                <span className="text-sm font-semibold">Distance</span>
+                            </div>
+                            <p className="text-2xl font-bold text-brand-light">{lastWalk ? `${lastWalk.distance.toFixed(2)} km` : '—'}</p>
+                        </div>
+                         <div className="bg-brand-card p-4 rounded-2xl flex flex-col items-start space-y-2">
+                            <div className="flex items-center space-x-2 text-brand-accent">
+                                <HomeIcon className="w-5 h-5" />
+                                <span className="text-sm font-semibold">Last Duration</span>
+                            </div>
+                            <p className="text-2xl font-bold text-brand-light">{lastWalk ? formatDuration(lastWalk.duration, 'long') : '—'}</p>
+                        </div>
+                    </div>
+
+                    <button onClick={onManualStart} className="w-full flex items-center justify-center p-4 bg-brand-accent text-brand-dark rounded-full font-bold text-lg shadow-lg">
+                        <PlayIcon className="w-6 h-6 mr-2" />
+                        Start Walk
+                    </button>
+                </div>
+            );
+        };
+
+        const ZonesView = ({ customZones, currentPosition, onAddZone, onDeleteZone }) => {
+            const [zoneName, setZoneName] = useState('');
+            const [zoneRadius, setZoneRadius] = useState('100');
+            const [zoneColor, setZoneColor] = useState(ZONE_COLORS[0]);
+
+            const handleAddZone = () => {
+                if (!zoneName.trim() || !currentPosition) return;
+                const radiusMeters = parseInt(zoneRadius, 10);
+                if (isNaN(radiusMeters) || radiusMeters <= 0) return;
+                onAddZone(zoneName, currentPosition.coords.latitude, currentPosition.coords.longitude, radiusMeters / 1000, zoneColor);
+                setZoneName('');
+                setZoneRadius('100');
+                setZoneColor(ZONE_COLORS[0]);
+            };
+            
+            return (
+                <div className="p-4">
+                    <h2 className="text-3xl font-bold text-brand-light mb-4">Named Zones</h2>
+                    <div className="bg-brand-card p-4 rounded-2xl mb-6 space-y-4">
+                        <h3 className="text-lg font-bold text-brand-light">Create New Zone</h3>
+                        <input type="text" value={zoneName} onChange={(e) => setZoneName(e.target.value)} placeholder="e.g., Park Entrance" className="w-full bg-brand-dark border border-brand-card text-brand-light rounded-lg p-3 focus:ring-brand-accent focus:border-brand-accent"/>
+                        <input type="number" value={zoneRadius} onChange={(e) => setZoneRadius(e.target.value)} placeholder="100" className="w-full bg-brand-dark border border-brand-card text-brand-light rounded-lg p-3 focus:ring-brand-accent focus:border-brand-accent"/>
+                        <div className="flex justify-between items-center py-2">
+                            {ZONE_COLORS.map(color => (
+                                <button key={color} style={{ backgroundColor: color }} onClick={() => setZoneColor(color)} className={`w-8 h-8 rounded-full transition-transform transform hover:scale-110 ${zoneColor === color ? 'ring-2 ring-offset-2 ring-offset-brand-card ring-brand-light' : ''}`}/>
+                            ))}
+                        </div>
+                        <button onClick={handleAddZone} disabled={!currentPosition} className="w-full flex items-center justify-center p-3 bg-brand-accent text-brand-dark rounded-full font-bold hover:opacity-90 disabled:bg-gray-500">
+                            <PlusCircleIcon className="w-6 h-6 mr-2" />
+                            Add Current Location
+                        </button>
+                    </div>
+                    <div className="space-y-3">
+                        {customZones.map(zone => (
+                            <div key={zone.id} className="bg-brand-card p-4 rounded-2xl flex justify-between items-center">
+                                <div className="flex items-center">
+                                    <div className="w-4 h-4 rounded-full mr-4" style={{ backgroundColor: zone.color }}></div>
+                                    <div>
+                                        <p className="font-bold text-brand-light">{zone.name}</p>
+                                        <p className="text-sm text-brand-secondary">{zone.radius * 1000}m radius</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => onDeleteZone(zone.id)} className="text-red-400 hover:text-red-500 p-2"><TrashIcon className="w-5 h-5" /></button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const HistoryView = ({ walks, customZones, onDeleteWalk }) => {
+            const zoneColorMap = useMemo(() => {
+                const map = new Map();
+                customZones.forEach(zone => map.set(zone.name, zone.color));
+                return map;
+            }, [customZones]);
+            
+            return (
+                <div className="p-4">
+                    <h2 className="text-3xl font-bold text-brand-light mb-4">Walk History</h2>
+                    <div className="space-y-3">
+                        {[...walks].reverse().map(walk => (
+                            <div key={walk.id} className="bg-brand-card p-4 rounded-2xl">
+                                 <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className="font-bold text-brand-light">{new Date(walk.startTime).toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'})}</p>
+                                        <p className="text-xs text-brand-secondary">
+                                            {new Date(walk.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {walk.endTime ? new Date(walk.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Ongoing'}
+                                        </p>
+                                    </div>
+                                    <button onClick={() => onDeleteWalk(walk.id)} className="text-red-400 hover:text-red-500 p-1 -mt-1"><TrashIcon className="w-5 h-5" /></button>
+                                 </div>
+                                 <div className="flex items-center justify-between text-brand-secondary mt-3 pt-3 border-t border-brand-dark/50">
+                                    <span className="font-bold text-brand-light">{formatDuration(walk.duration)}</span>
+                                    <span className="font-bold text-brand-light">{walk.distance.toFixed(2)} km</span>
+                                 </div>
+                                 {walk.zonesVisited.length > 0 && (
+                                    <div className="mt-3 pt-3 border-t border-brand-dark/50">
+                                        <p className="text-xs text-brand-secondary mb-2">Zones Visited:</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {walk.zonesVisited.map(zoneName => (
+                                                <span key={zoneName} style={{ backgroundColor: zoneColorMap.get(zoneName) || '#A8A5A3' }} className="px-2 py-1 text-xs text-brand-dark font-bold rounded-full">
+                                                    {zoneName}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                 )}
+                            </div>
+                        ))}
+                        {walks.length === 0 && <p className="text-center text-brand-secondary">No walks recorded yet.</p>}
+                    </div>
+                </div>
+            );
+        };
+
+        const SettingsView = ({ settings, onSettingsChange }) => {
+            const handleToggle = () => {
+                if (!settings.enabled && 'Notification' in window && Notification.permission !== 'granted') {
+                    Notification.requestPermission().then(p => { if (p === 'granted') onSettingsChange({ ...settings, enabled: true }); });
+                } else {
+                    onSettingsChange({ ...settings, enabled: !settings.enabled });
+                }
+            };
+            
+            return (
+                <div className="p-4">
+                    <h2 className="text-3xl font-bold text-brand-light mb-4">Settings</h2>
+                    <div className="bg-brand-card p-4 rounded-2xl mb-4">
+                        <div className="flex items-center justify-between">
+                             <p className="text-brand-light">Walk Reminder Notifications</p>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked={settings.enabled} onChange={handleToggle} className="sr-only peer" />
+                                <div className="w-11 h-6 bg-brand-dark peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                            </label>
+                        </div>
+                        {settings.enabled && (
+                            <div className="mt-4 pt-4 border-t border-brand-dark">
+                                <label htmlFor="hours" className="block text-sm font-medium text-brand-secondary">Notify after</label>
+                                <div className="flex items-center mt-2">
+                                     <input type="range" id="hours" min="1" max="12" value={settings.hours} onChange={(e) => onSettingsChange({...settings, hours: parseInt(e.target.value)})} className="w-full h-2 bg-brand-dark rounded-lg appearance-none cursor-pointer accent-brand-accent"/>
+                                    <span className="ml-4 text-brand-light font-bold w-16 text-center">{settings.hours} hr</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="bg-brand-card p-4 rounded-2xl">
+                        <h3 className="text-lg font-bold text-brand-light mb-2">Background Tracking</h3>
+                        <p className="text-sm text-brand-secondary">
+                            Please note: Mobile browsers heavily restrict location tracking when the app is in the background or the screen is off. 
+                            For the most reliable walk tracking, please keep this app open and on-screen during your walk.
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        function App() {
+            const [view, setView] = useState('home');
+            const [permissionsGranted, setPermissionsGranted] = useState(false);
+            const [currentPosition, setCurrentPosition] = useState(null);
+            const [isWalking, setIsWalking] = useState(false);
+            const [currentWalk, setCurrentWalk] = useState(null);
+            
+            const [storedData, setStoredData] = useState({
+                homeZone: null, customZones: [], walks: [],
+                settings: { enabled: false, hours: 8 },
+            });
+            
+            const { homeZone, customZones, walks, settings } = storedData;
+            const lastWalk = useMemo(() => walks.length > 0 ? [...walks].sort((a,b) => (b.endTime ?? 0) - (a.endTime ?? 0))[0] : null, [walks]);
+
+            const walkStatusRef = useRef('at_home');
+            const confirmationRef = useRef({ points: 0, startTime: 0, startPosition: null });
+
+            useEffect(() => {
+                const rawData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (rawData) {
+                    try {
+                        setStoredData(JSON.parse(rawData));
+                    } catch (e) {
+                        console.error("Error parsing stored data:", e);
+                    }
+                }
+            }, []);
+
+            const saveData = useCallback((data) => {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+                setStoredData(data);
+            }, []);
+
+            const handleGrantPermission = useCallback(() => {
+                navigator.geolocation.getCurrentPosition(() => setPermissionsGranted(true), (e) => alert(`Permission denied: ${e.message}`));
+            }, []);
+
+            const setHome = useCallback((pos) => {
+                const newHomeZone = { id: 'home', name: 'Home', latitude: pos.coords.latitude, longitude: pos.coords.longitude, radius: HOME_RADIUS_KM, color: '#A8A5A3' };
+                saveData({ ...storedData, homeZone: newHomeZone });
+            }, [saveData, storedData]);
+
+            const startWalk = useCallback((startTime, startPosition) => {
+                if(isWalking) return;
+                const newWalk = { id: `walk_${startTime}`, startTime, endTime: null, duration: 0, distance: 0, path: [startPosition], zonesVisited: [] };
+                setCurrentWalk(newWalk);
+                setIsWalking(true);
+                walkStatusRef.current = 'walking';
+            }, [isWalking]);
+            
+            const handleManualStart = useCallback(() => {
+                if (currentPosition) {
+                    startWalk(Date.now(), { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude });
+                } else {
+                    alert("Waiting for location to start walk...");
+                }
+            }, [currentPosition, startWalk]);
+            
+            const processPositionUpdate = useCallback((pos) => {
+                setCurrentPosition(pos);
+                if (!homeZone) return;
+
+                const { latitude, longitude } = pos.coords;
+                const distanceFromHome = getDistance(latitude, longitude, homeZone.latitude, homeZone.longitude);
+
+                if (walkStatusRef.current === 'at_home' && distanceFromHome > HOME_RADIUS_KM) {
+                    walkStatusRef.current = 'leaving';
+                    confirmationRef.current = { points: 1, startTime: Date.now(), startPosition: { lat: latitude, lng: longitude } };
+                } else if (walkStatusRef.current === 'leaving') {
+                    if (distanceFromHome > HOME_RADIUS_KM) {
+                        confirmationRef.current.points += 1;
+                        if (confirmationRef.current.points >= WALK_START_CONFIRMATION_COUNT) {
+                            startWalk(confirmationRef.current.startTime, confirmationRef.current.startPosition);
+                        }
+                    } else {
+                        walkStatusRef.current = 'at_home';
+                    }
+                } else if (walkStatusRef.current === 'walking' && currentWalk) {
+                    const lastPoint = currentWalk.path[currentWalk.path.length - 1];
+                    const newDistance = getDistance(lastPoint.lat, lastPoint.lng, latitude, longitude);
+                    const visitedZones = new Set(currentWalk.zonesVisited);
+                    customZones.forEach(z => { if (getDistance(latitude, longitude, z.latitude, z.longitude) <= z.radius) visitedZones.add(z.name); });
+                    setCurrentWalk({ ...currentWalk, distance: currentWalk.distance + newDistance, path: [...currentWalk.path, { lat: latitude, lng: longitude }], zonesVisited: Array.from(visitedZones) });
+                    
+                    if (distanceFromHome <= HOME_RADIUS_KM) {
+                        walkStatusRef.current = 'returning';
+                        confirmationRef.current = { points: 1, startTime: Date.now(), startPosition: null };
+                    }
+                } else if (walkStatusRef.current === 'returning') {
+                    if (distanceFromHome <= HOME_RADIUS_KM) {
+                        confirmationRef.current.points += 1;
+                        if (confirmationRef.current.points >= WALK_END_CONFIRMATION_COUNT && currentWalk) {
+                            const endTime = confirmationRef.current.startTime;
+                            const completedWalk = { ...currentWalk, endTime, duration: Math.floor((endTime - currentWalk.startTime) / 1000) };
+                            saveData({ ...storedData, walks: [...walks, completedWalk] });
+                            setCurrentWalk(null);
+                            setIsWalking(false);
+                            walkStatusRef.current = 'at_home';
+                        }
+                    } else {
+                        walkStatusRef.current = 'walking';
+                    }
+                }
+            }, [homeZone, startWalk, currentWalk, customZones, saveData, storedData, walks]);
+
+            useEffect(() => {
+                if (!permissionsGranted || !homeZone) return;
+
+                let watchId;
+                let intervalId;
+
+                if (isWalking) {
+                    watchId = navigator.geolocation.watchPosition(
+                        processPositionUpdate,
+                        (err) => console.error("High-accuracy watch error:", err),
+                        HIGH_ACCURACY_GEOLOCATION_OPTIONS
+                    );
+                } else {
+                    const checkPosition = () => {
+                        navigator.geolocation.getCurrentPosition(
+                            processPositionUpdate,
+                            (err) => console.error("Low-power check error:", err),
+                            LOW_POWER_GEOLOCATION_OPTIONS
+                        );
+                    };
+                    checkPosition();
+                    intervalId = setInterval(checkPosition, LOW_POWER_INTERVAL);
+                }
+
+                return () => {
+                    if (watchId) navigator.geolocation.clearWatch(watchId);
+                    if (intervalId) clearInterval(intervalId);
+                };
+            }, [isWalking, permissionsGranted, homeZone, processPositionUpdate]);
+            
+            useEffect(() => {
+                if(!settings.enabled || isWalking || !lastWalk?.endTime) return;
+                const checkInterval = setInterval(() => {
+                    if(Date.now() - lastWalk.endTime >= settings.hours * 3600000) {
+                        const key = `notified_${lastWalk.id}`;
+                        if(!sessionStorage.getItem(key)) {
+                            new Notification('Time for a walk!', { body: `It's been over ${settings.hours} hours!` });
+                            sessionStorage.setItem(key, 'true');
+                        }
+                    }
+                }, 300000); // check every 5 minutes
+                return () => clearInterval(checkInterval);
+            }, [settings, isWalking, lastWalk])
+
+            const addZone = (name, lat, lng, radius, color) => {
+                const newZone = { id: `zone_${Date.now()}`, name, latitude: lat, longitude: lng, radius, color };
+                saveData({ ...storedData, customZones: [...customZones, newZone] });
+            };
+
+            const deleteZone = (id) => {
+                if(confirm("Delete this zone?")) {
+                    saveData({ ...storedData, customZones: customZones.filter(z => z.id !== id) });
+                }
+            };
+
+            const deleteWalk = (id) => {
+                if(confirm("Are you sure you want to delete this walk record?")) {
+                    saveData({ ...storedData, walks: walks.filter(w => w.id !== id) });
+                }
+            };
+
+            if (!permissionsGranted) return <PermissionsGate onGrant={handleGrantPermission} />;
+            if (!homeZone) return <SetupHome onSetHome={setHome} />;
+
+            const renderView = () => {
+                switch (view) {
+                    case 'home': return <HomeView isWalking={isWalking} currentWalk={currentWalk} lastWalk={lastWalk} onManualStart={handleManualStart} />;
+                    case 'zones': return <ZonesView customZones={customZones} currentPosition={currentPosition} onAddZone={addZone} onDeleteZone={deleteZone} />;
+                    case 'history': return <HistoryView walks={walks} customZones={customZones} onDeleteWalk={deleteWalk} />;
+                    case 'settings': return <SettingsView settings={settings} onSettingsChange={(s) => saveData({ ...storedData, settings: s })} />;
+                    default: return <HomeView isWalking={isWalking} currentWalk={currentWalk} lastWalk={lastWalk} onManualStart={handleManualStart} />;
+                }
+            };
+
+            return (
+                <div className="bg-brand-dark text-brand-light min-h-screen font-sans">
+                    <Header setView={setView} />
+                    <main className="pb-24">
+                        {renderView()}
+                    </main>
+                    <BottomNav currentView={view} setView={setView} />
+                </div>
+            );
+        }
+        
+        // --- RENDER THE APP (from index.tsx) ---
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        );
+
+    </script>
+</body>
+</html>
